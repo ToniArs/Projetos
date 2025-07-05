@@ -141,18 +141,16 @@ def AbrePortal(T):
         return True
     return False
 
-
 def PosicaoCobra(S, parte):
     """Devolve a posição [x,y] de uma parte do corpo da cobra."""
     if parte == 'cabeca':
         return list(S[0]) if S else None
     elif parte == 'cauda':
         return list(S[-1]) if S else None
-    try:
-        return list(S[parte])  # Assume que parte é um índice
-    except (IndexError, TypeError):
+    elif isinstance(parte, int) and 0 <= parte < len(S):
+        return list(S[parte])
+    else:
         return None
-
 
 def MoveCobra(c, T, S, H):
     """
