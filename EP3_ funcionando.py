@@ -102,8 +102,6 @@ def ImprimeEstadoDoJogo(T, S): #Imprime o estado atual do jogo
     print('+' + '-' * len(T[0]) + '+')
 
     # Informações do jogo
-    print(f"Pontos: {pontos_globais}")
-    print(f"Tamanho da cobra: {len(S)}")
     if portais_abertos_globais:
         print("Portais ativos!")
 
