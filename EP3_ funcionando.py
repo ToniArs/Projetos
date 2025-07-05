@@ -4,8 +4,45 @@ VITORIA      = 2
 MORTE        = 3
 
 
+'''def LeNivel(nome_arquivo):
+    return [],[]'''
+
 def LeNivel(nome_arquivo):
-    return [],[]
+    """Carrega um nível a partir de um arquivo e retorna o tabuleiro (T) e a cobra (S)."""
+    global pontos_globais, portais_abertos_globais
+    T = []
+    S = []
+    pontos_globais = 0  # Reinicia pontos ao carregar novo nível
+    portais_abertos_globais = False  # Reinicia portais
+
+    # Abre o arquivo manualmente
+    f = open(nome_arquivo, 'r')
+    linhas = f.readlines()
+    f.close()  # Fecha o arquivo manualmente
+
+    for y, linha in enumerate(linhas):
+        linha = linha.strip()
+        if not linha:
+            continue
+
+        linha_tabuleiro = []
+        for x, char in enumerate(linha):
+            if char == CABECA:
+                S.insert(0, (x, y))  # Cabeça no início da lista
+                linha_tabuleiro.append(VAZIO)
+            elif char == CORPO:
+                S.append((x, y))  # Partes do corpo
+                linha_tabuleiro.append(VAZIO)
+            else:
+                linha_tabuleiro.append(char)
+
+        T.append(linha_tabuleiro)
+
+    # Verifica se tem fruta, senão cria uma
+    if not any(FRUTA in linha for linha in T):
+        criar_fruta(T, S)
+            
+    return T, S
 
 
 def ImprimeEstadoDoJogo(T, S):
