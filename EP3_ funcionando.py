@@ -1,3 +1,4 @@
+
 import random
 import os
 import time
@@ -21,6 +22,24 @@ MORTE        = 3
 # Elas serão passadas como parâmetros para as funções.
 pontos_globais = 0
 portais_abertos_globais = False
+
+def criar_fruta(T, S):
+    """Cria uma fruta em posição aleatória no tabuleiro T,
+    evitando posições ocupadas pela cobra ou por outros elementos fixos.
+    """
+    posicoes_vazias = []
+    for y in range(len(T)):
+        for x in range(len(T[y])):
+            # Verifica se a posição é vazia e não está ocupada por nenhum segmento da cobra
+            if T[y][x] == VAZIO and (x, y) not in S:
+                posicoes_vazias.append((x, y))
+
+    if posicoes_vazias:
+        x, y = random.choice(posicoes_vazias)
+        T[y][x] = FRUTA
+        return True # Fruta criada
+    return False # Não foi possível criar fruta
+
 
 def LeNivel(nome_arquivo):
     """Carrega um nível a partir de um arquivo e retorna o tabuleiro (T) e a cobra (S)."""
@@ -71,6 +90,7 @@ def ImprimeEstadoDoJogo(T, S): #Imprime o estado atual do jogo
     for i, (x, y) in enumerate(S): # Adiciona a cobra ao tabuleiro de impressão
         # Verifica se as coordenadas são válidas antes de tentar acessar
         if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
+            tabuleiro_impressao[y][x] = CABECA if i == 0 else CORPO
         else:
             # Se alguma parte da cobra está fora dos limites visíveis, isso pode indicar um problema
             # ou que a cobra está caindo para fora da tela.
