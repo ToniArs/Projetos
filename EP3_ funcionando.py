@@ -16,6 +16,11 @@ MOV_VALIDO   = 1
 VITORIA      = 2
 MORTE        = 3
 
+# Variáveis globais para manter o estado (necessário após remover a classe)
+# Estas variáveis simulam os atributos da classe SnakeFalls.
+# Elas serão passadas como parâmetros para as funções.
+pontos_globais = 0
+portais_abertos_globais = False
 
 def LeNivel(nome_arquivo):
     """Carrega um nível a partir de um arquivo e retorna o tabuleiro (T) e a cobra (S)."""
@@ -53,8 +58,34 @@ def LeNivel(nome_arquivo):
     return T, S
 
 
+'''
 def ImprimeEstadoDoJogo(T, S):
     print()
+'''
+
+
+def ImprimeEstadoDoJogo(T, S): #Imprime o estado atual do jogo
+    os.system('cls' if os.name == 'nt' else 'clear')
+    tabuleiro_impressao = [linha.copy() for linha in T]# Copia do tabuleiro para não modificar o original
+
+    for i, (x, y) in enumerate(S): # Adiciona a cobra ao tabuleiro de impressão
+        # Verifica se as coordenadas são válidas antes de tentar acessar
+        if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
+        else:
+            # Se alguma parte da cobra está fora dos limites visíveis, isso pode indicar um problema
+            # ou que a cobra está caindo para fora da tela.
+            pass # Não faz nada, a parte fora da tela não é impressa
+    # Imprime o tabuleiro
+    print('+' + '-' * len(T[0]) + '+')
+    for linha in tabuleiro_impressao:
+        print('|' + ''.join(linha) + '|')
+    print('+' + '-' * len(T[0]) + '+')
+
+    # Informações do jogo
+    print(f"Pontos: {pontos_globais}")
+    print(f"Tamanho da cobra: {len(S)}")
+    if portais_abertos_globais:
+        print("Portais ativos!")
 
 
 def AbrePortal(T):
