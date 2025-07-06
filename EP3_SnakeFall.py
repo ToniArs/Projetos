@@ -99,9 +99,11 @@ def ImprimeEstadoDoJogo(T, S):
     for i, (x, y) in enumerate(S):
         # Verifica se as coordenadas são válidas antes de tentar acessar
         for i, (x, y) in enumerate(S):
+            if (x, y) is None:
+                continue
             if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
                 tabuleiro_impressao[y][x] = str(i)
-        else:
+            else:
             # Se alguma parte da cobra está fora dos limites visíveis, isso pode indicar um problema
             # ou que a cobra está caindo para fora da tela.
             pass # Não faz nada, a parte fora da tela não é impressa
