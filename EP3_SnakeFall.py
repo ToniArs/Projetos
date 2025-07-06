@@ -107,10 +107,10 @@ def ImprimeEstadoDoJogo(T, S):
             pass # Não faz nada, a parte fora da tela não é impressa
 
     # Imprime o tabuleiro
-    print('+' + '-' * len(T[0]) + '+')
+    print(len(T[0]))
     for linha in tabuleiro_impressao:
-        print('|' + ''.join(linha) + '|')
-    print('+' + '-' * len(T[0]) + '+')
+        print(join(linha))
+    print(len(T[0]))
 
     # Informações do jogo
     print(f"Pontos: {pontos_globais}")
