@@ -109,7 +109,7 @@ def ImprimeEstadoDoJogo(T, S):
     # Imprime o tabuleiro
     print(len(T[0]))
     for linha in tabuleiro_impressao:
-        print(join(linha))
+        print("".join(linha))   # Corrigido aqui o uso do join
     print(len(T[0]))
 
     # Informações do jogo
