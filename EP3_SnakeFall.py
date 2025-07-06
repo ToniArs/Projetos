@@ -1,6 +1,7 @@
 import random
 import os
 import time
+import copy
 
 # Constantes do jogo
 VAZIO = ' '
@@ -152,23 +153,28 @@ def PosicaoCobra(S, parte):
     else:
         return None
 
+def copia_estado(obj):
+    return copy.deepcopy(obj)
+
 def MoveCobra(c, T, S, H):
     """
     Move a cobra na direção especificada.
     Retorna MOV_VALIDO, MOV_INVALIDO, VITORIA ou MORTE.
     """
     global pontos_globais, portais_abertos_globais
-    
-    # Salva estado atual no histórico antes de mover
-    H.append(copia_estado(T, S, pontos_globais, portais_abertos_globais))
+
+    # Salva o estado atual no histórico antes de mover
+    H.append((copia_estado(S), copia_estado(pontos_globais), copia_estado(portais_abertos_globais)))
     if len(H) > 10:  # Limita o histórico
         H.pop(0)
-
+    
     # Obtém posição da cabeça
+    if not S:
+        return MORTE
     cabeca_x, cabeca_y = S[0]
+    nova_x, nova_y = cabeca_x, cabeca_y
 
     # Calcula nova posição da cabeça
-    nova_x, nova_y = cabeca_x, cabeca_y
     if c == 'c':  # Cima
         nova_y -= 1
     elif c == 'b':  # Baixo
@@ -188,33 +194,26 @@ def MoveCobra(c, T, S, H):
     if T[nova_y][nova_x] == PAREDE:
         return MORTE
 
-    # Verifica colisão com próprio corpo (exceto se for a cauda prestes a sair)
-    if (nova_x, nova_y) in S[:-1]: # Verifica todos os segmentos menos o último (cauda)
+    # Verifica colisão com próprio corpo (exceto cauda que vai sair se não comer fruta)
+    if (nova_x, nova_y) in S[:-1]:
         return MORTE
-    
+
     # Verifica portal
     if T[nova_y][nova_x] == PORTAL and portais_abertos_globais:
         # Encontra o outro portal
         outros_portais = []
-        for y_scan in range(len(T)):
-            for x_scan in range(len(T[y_scan])):
-                if T[y_scan][x_scan] == PORTAL and (x_scan, y_scan) != (nova_x, nova_y):
-                    outros_portais.append((x_scan, y_scan))
-        
+        for y in range(len(T)):
+            for x in range(len(T[y])):
+                if T[y][x] == PORTAL and (x, y) != (nova_x, nova_y):
+                    outros_portais.append((x, y))
         if outros_portais:
             nova_x, nova_y = random.choice(outros_portais)
-            # Ao teletransportar, certifique-se de que a cobra não apareça em cima de uma parede ou fruta no destino
-            if T[nova_y][nova_x] == PAREDE: # ou outra condição de morte, se aplicável ao destino do portal
+            if T[nova_y][nova_x] == PAREDE:
                 return MORTE
-        else: # Se entrou num portal mas não há outro, permanece no lugar (ou game over, dependendo da regra)
-            # Para este EP, vamos considerar que deve haver um par de portais para teletransporte funcionar.
-            # Se não há outro portal, a cobra não se move pelo portal.
-            # No contexto do jogo, isso não deve acontecer se AbrePortal garantir 2 portais.
-            pass
 
-    # Move a cobra: Adiciona a nova cabeça
+    # Move a cobra: Adiciona nova cabeça
     S.insert(0, (nova_x, nova_y))
-    
+
     comeu_fruta = False
     # Verifica se comeu fruta
     if T[nova_y][nova_x] == FRUTA:
@@ -222,7 +221,6 @@ def MoveCobra(c, T, S, H):
         pontos_globais += 1
         comeu_fruta = True
         criar_fruta(T, S) # Cria nova fruta
-
         # A cada 5 pontos, abre portais (se ainda não abertos)
         if pontos_globais > 0 and pontos_globais % 5 == 0:
             AbrePortal(T)
@@ -230,13 +228,9 @@ def MoveCobra(c, T, S, H):
     if not comeu_fruta:
         S.pop()  # Remove cauda se não comeu fruta (mantém o mesmo tamanho)
 
-    # Condição de vitória: se a cobra preencher o tabuleiro (excluindo paredes fixas)?
-    # Ou um objetivo de pontos? O main só verifica vitória se MoveCobra retornar VITORIA.
-    # Por padrão, não há condição de vitória explícita neste esqueleto além de pontos.
-    # Se o objetivo for comer todas as frutas ou atingir um certo tamanho, adicione aqui.
-    # Exemplo: if pontos_globais >= PONTOS_PARA_VITORIA: return VITORIA
-    # Para o escopo do EP, geralmente não há um VITORIA explícito, apenas a meta de sobreviver.
-    # Se não houver mais frutas e a cobra não morrer, o jogo pode continuar indefinidamente.
+    # Você pode adicionar uma condição de vitória aqui, se desejar.
+    # Exemplo: vitória se todos os espaços livres forem ocupados pela cobra.
+    # if ...: return VITORIA
 
     return MOV_VALIDO
 
