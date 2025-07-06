@@ -7,8 +7,6 @@ import copy
 VAZIO = ' '
 PAREDE = '#'
 FRUTA = '*'
-CORPO = 'o'
-CABECA = 'O'
 PORTAL = '@'
 
 # Constantes de retorno das funções
@@ -69,11 +67,12 @@ def LeNivel(nome_arquivo):
 
         linha_tabuleiro = []
         for x, char in enumerate(linha):
-            if char == CABECA:
-                S.insert(0, (x, y))  # Cabeça no início da lista
-                linha_tabuleiro.append(VAZIO)
-            elif char == CORPO:
-                S.append((x, y))  # Partes do corpo
+            if char.isdigit():
+                idx = int(char)
+                # Garante que a lista S tenha o tamanho certo
+                while len(S) <= idx:
+                    S.append(None)
+                S[idx] = (x, y)
                 linha_tabuleiro.append(VAZIO)
             else:
                 linha_tabuleiro.append(char)
@@ -99,8 +98,9 @@ def ImprimeEstadoDoJogo(T, S):
     # Adiciona a cobra ao tabuleiro de impressão
     for i, (x, y) in enumerate(S):
         # Verifica se as coordenadas são válidas antes de tentar acessar
-        if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
-            tabuleiro_impressao[y][x] = CABECA if i == 0 else CORPO
+        for i, (x, y) in enumerate(S):
+            if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
+                tabuleiro_impressao[y][x] = str(i)
         else:
             # Se alguma parte da cobra está fora dos limites visíveis, isso pode indicar um problema
             # ou que a cobra está caindo para fora da tela.
