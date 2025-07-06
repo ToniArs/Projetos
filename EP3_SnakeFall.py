@@ -96,18 +96,14 @@ def ImprimeEstadoDoJogo(T, S):
     tabuleiro_impressao = [linha.copy() for linha in T]
 
     # Adiciona a cobra ao tabuleiro de impressão
-    for i, (x, y) in enumerate(S):
-        # Verifica se as coordenadas são válidas antes de tentar acessar
-        for i, (x, y) in enumerate(S):
-            if (x, y) is None:
-                continue
-            if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
-                tabuleiro_impressao[y][x] = str(i)
-            else:
-            # Se alguma parte da cobra está fora dos limites visíveis, isso pode indicar um problema
-            # ou que a cobra está caindo para fora da tela.
-            pass # Não faz nada, a parte fora da tela não é impressa
-
+    for i, pos in enumerate(S):
+        if pos is None:
+            continue
+        x, y = pos
+        if 0 <= y < len(tabuleiro_impressao) and 0 <= x < len(tabuleiro_impressao[0]):
+            tabuleiro_impressao[y][x] = str(i)
+        # Se estiver fora do tabuleiro, ignore
+    
     # Imprime o tabuleiro
     print(len(T[0]))
     for linha in tabuleiro_impressao:
